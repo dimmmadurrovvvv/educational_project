@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Простой слайдер</title>
+
+  <!-- Стили -->
+  <style>
+    /* Общие стили для тела страницы */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Контейнер всего слайдера */
+    .slider {
+      width: 600px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    /* Контейнер для изображений */
+    .slider-container {
+      position: relative; 
+      width: 100%;
+      height: 400px;
+      overflow: hidden;
+    }
+
+    /* Сами изображения */
+    .slider-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; 
+      position: absolute; 
+      opacity: 0; 
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    /* Отображаемое (активное) изображение */
+    .slider-container img.active {
+      opacity: 1; /* Только активное изображение будет видимо */
+      position: relative; /* Чтобы не накапливались одно на другом */
+    }
+
+    /* Блок с кнопками управления и счётчиком */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: #eee;
+    }
+
+    /* Стили самих кнопок */
+    .controls button {
+      padding: 8px 16px;
+      background: #2196f3;
+      color: #fff;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: background 0.3s ease;
+    }
+
+    /* Ховер-эффект на кнопках */
+    .controls button:hover {
+      background: #1769aa;
+    }
+
+    /* Счётчик (пример: "Изображение 1 из 5") */
+    #counter {
+      font-weight: bold;
+    }
+
+    /* Адаптивность под мобильные устройства */
+    @media(max-width: 650px) {
+      .slider {
+        width: 90%;
+      }
+      .slider-container {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="slider">
+  <div class="slider-container">
+    <!--
+      Здесь указываем изображения слайдера.
+      Каждое изображение в отдельном теге <img>.
+      В атрибуте src пропишите нужные вам пути к файлам (jpg, png и т.д.).
+      Можно использовать локальные файлы (например, img1.jpg) или ссылки из интернета.
+    -->
+
+    <img src="img1.jpg" alt="Изображение 1" class="active" />
+    <img src="img2.jpg" alt="Изображение 2" />
+    <img src="img3.jpg" alt="Изображение 3" />
+    <img src="img4.jpg" alt="Изображение 4" />
+    <img src="img5.jpg" alt="Изображение 5" />
+  </div>
+
+  <div class="controls">
+    <!-- Кнопка "Назад" -->
+    <button id="prevBtn">Назад</button>
+    
+    <!-- Счётчик текущего изображения ("Изображение X из Y") -->
+    <div id="counter"></div>
+
+    <!-- Кнопка "Вперед" -->
+    <button id="nextBtn">Вперёд</button>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  // Получаем все элементы <img> внутри .slider-container
+  const images = document.querySelectorAll('.slider-container img');
+  // Текущий индекс изображения, которое отображается
+  let currentIndex = 0;
+  // Элемент для вывода счётчика
+  const counterEl = document.getElementById('counter');
+  
+  // Функция, которая обновляет состояние слайдера:
+  //  - снимает класс active со всех изображений
+  //  - назначает класс active изображению с текущим индексом
+  //  - обновляет счётчик (например, "Изображение 1 из 5")
+  function updateSlider() {
+    // Перебираем все картинки, снимаем класс active
+    images.forEach((img) => {
+      img.classList.remove('active');
+    });
+    // Добавляем класс active только нужному изображению
+    images[currentIndex].classList.add('active');
+    // Обновляем текст счётчика
+    counterEl.textContent = `Изображение ${currentIndex + 1} из ${images.length}`;
+  }
+
+  // Функция, которая переключается на следующее изображение
+  function showNextImage() {
+    // Увеличиваем currentIndex на 1
+    currentIndex++;
+    // Проверка "зацикливания": если вышли за предел (images.length - 1), возвращаемся в 0
+    if (currentIndex >= images.length) {
+      currentIndex = 0;
+    }
+    updateSlider();
+  }
+
+  // Функция, которая переключается на предыдущее изображение
+  function showPrevImage() {
+    // Уменьшаем currentIndex на 1
+    currentIndex--;
+    // Если ушли "до" нуля, переходим к последнему индексу
+    if (currentIndex < 0) {
+      currentIndex = images.length - 1;
+    }
+    updateSlider();
+  }
+
+  // Находим кнопки "назад" и "вперёд" по id
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  // Назначаем обработчики клика (слушатели событий)
+  prevBtn.addEventListener('click', showPrevImage);
+  nextBtn.addEventListener('click', showNextImage);
+
+  // При загрузке страницы сразу выставляем правильное начальное состояние
+  updateSlider();
+</script>
+
+</body>
+</html>
